@@ -1,69 +1,32 @@
-function guardaCumple(datos) {
-  localStorage.setItem("fechas", JSON.stringify(datos))
-}
+const APIKEY = 'X7L133d3LKB45Lwh7xwsblQPqxKhSWxarJpO2KeUazVokj8CCaW8HfEE';
+let apiUrl = 'https://api.pexels.com/v1/search?query=birthday cakes';
+let headers = {
+    'Authorization': APIKEY
+};
 
-function obtenerCumple() {
-  let cumpleanos = localStorage.getItem("fechas");
-  if (cumpleanos == null) {
-    registro = [];
-  } else {
-    registro = JSON.parse(cumpleanos);
-  }
-  return registro;
-}
-
-let datos = null;
-const fechas = obtenerCumple();
-// si existen datos ingresados asignarlo a fechas
-if (fechas.length > 0) {
-  datos = fechas;
-// sino crear desde cero
-} else {
-  datos = []
-}
-// mostrar datos al cargar la pagina
-mostrarDatos()
-
-const AGREGARFECHA = document.querySelector("#formulario");
-
-AGREGARFECHA.addEventListener("submit", (event) => {
-  event.preventDefault();
-  let nombre = document.querySelector("#nombre").value;
-  let fecha = document.querySelector("#fecha").value;
-  let info = {
-    nombre: nombre,
-    fecha: fecha,
-  };
-
-    datos.push(info);
-    guardaCumple(datos);
-
-    AGREGARFECHA.reset();
-
-    //mostrar datos al agregar fecha
-    
-    mostrarDatos()
+fetch(apiUrl, {
+    method: 'GET',
+    headers: headers
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+    return response.json();
+})
+.then(data => {
+    renderImage(data);
+})
+.catch(error => {
+    return;
 });
 
-function mostrarDatos() {
-  
-  
-  let listaFechas = document.getElementById("listaCumples");
-  listaFechas.innerHTML = '';
+function renderImage(data) {
+    let photos = data.photos;
 
-  
-  fechas.forEach(function(fecha) {
-      
-      let li = document.createElement("li");
-
-      
-      li.textContent = fecha.nombre + " - Fecha: " + fecha.fecha;
-
-      
-      listaFechas.appendChild(li);
-  });
+    let imgSrc = photos[14].src.landscape;
+    
+    let imagen = document.getElementById("imagen_api");
+    imagen.src = imgSrc; 
+    
 }
-
-
-
-
